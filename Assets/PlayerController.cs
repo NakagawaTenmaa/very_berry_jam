@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     BoxBase box_base = null;
     int point = 0;
 
+    bool hide_status = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,6 +48,26 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(_right)) {
             transform.position += Vector3.right;
         }
+    }
+
+    /// <summary>
+    /// ‰B‚ê‚é‚æ
+    /// </summary>
+    public void HideAction()
+    {
+        hide_status = Input.GetKey(KeyCode.Z);
+        if (!hide_status) return;
+
+        // ‰B‚ê‚éƒAƒjƒ[ƒVƒ‡ƒ“‚Í‚±‚¿‚ç‚É
+    }
+
+    /// <summary>
+    /// ‰B‚êó‘Ô‚Ìæ“¾
+    /// </summary>
+    /// <returns></returns>
+    public bool getHideStatus()
+    {
+        return hide_status;
     }
 
     private void OnTriggerStay(Collider other)
