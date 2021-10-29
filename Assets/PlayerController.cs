@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    bool stop_flag = false;
+    BoxBase box_base = null;
+    int point = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +17,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (box_base == null) {
+            if(box_base.gimmick()) {
+                point = box_base.addPoint();
+            }
+        }
+
         // “ü—ÍˆÚ“®
         InputMove();
     }
@@ -34,5 +44,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(_right)) {
             transform.position += Vector3.right;
         }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag != BoxConst.NORMAL_BOX) return;
+        if (!Input.GetKeyDown(KeyCode.Space)) return;
+
+        // ‚±‚±‚Å” ‹ó‚¯‚é(ƒ|ƒCƒ“ƒg‰ÁŽZ)
+        box_base = other.gameObject.GetComponent<BoxBase>();
     }
 }
