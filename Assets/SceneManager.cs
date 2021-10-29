@@ -8,7 +8,7 @@ static public class MySceneManager
     // –{—ˆ‚Å‚ ‚ê‚Î•Ê“r’è”‚É‚í‚¯‚é‚×‚«‚»‚¤‚·‚é‚±‚Æ‚ÅŠÖ”‚Ìg‚¢‚Ü‚í‚µ‰Â”\
     const string TITLE_SCENE_NAME    = "TitleScene";
     const string GAMEOVER_SCENE_NAME = "GameOverScene";
-    const string RESULT_SCENE_NAME   = "ResultScene";
+    const string RESULT_SCENE_NAME   = "ScoreScene";
     const string PLAY_SCENE_NAME     = "PlayScene";
 
     static public void ChangePlayeScene()
