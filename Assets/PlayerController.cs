@@ -48,6 +48,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ‰B‚ê‚é‚æ
+    /// </summary>
+    public bool HideAction()
+    {
+        return Input.GetKey(KeyCode.Z);
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag != BoxConst.NORMAL_BOX) return;
