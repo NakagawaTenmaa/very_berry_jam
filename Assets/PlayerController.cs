@@ -17,10 +17,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (box_base == null) {
+        if (box_base != null) {
             if(box_base.gimmick()) {
                 point = box_base.addPoint();
+                box_base = null;
             }
+            return;
         }
 
         // “ü—ÍˆÚ“®
