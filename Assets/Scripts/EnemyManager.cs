@@ -7,6 +7,7 @@ public class EnemyManager : MonoBehaviour
 { 
     [SerializeField] GameObject _enemyPrefab;
     [SerializeField] float _appearSeconds;
+    [SerializeField] Vector3 _appearPos;
     Enemy _enemy;
 
     public Action<Enemy> onAppear;
@@ -25,6 +26,7 @@ public class EnemyManager : MonoBehaviour
         _time = 0;
 
         GameObject enemyInstance = Instantiate(_enemyPrefab);
+        enemyInstance.transform.position = _appearPos;
         _enemy = enemyInstance.GetComponent<Enemy>();
         _enemy.SetActive(false);
         _enemy.Init();
