@@ -50,7 +50,7 @@ public class Map : MonoBehaviour
 
                 MapChip chip = Instantiate(_mapChipPrefab, transform);
                 chip.Init(row, column, chipId);
-                //chip.SetEnable(false);
+                chip.SetEnable(false);
                 chip.SetPosition(column - kMapWidth / 2, (row - kMapHeight / 2) * -1);              
                 switch (chipId)
                 {
