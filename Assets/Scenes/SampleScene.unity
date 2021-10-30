@@ -563,6 +563,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mapChipPrefab: {fileID: 5662273007005864599, guid: 383ded27dda3d924cb0504b7e869d457, type: 3}
+  _isDiagonal: 0
 --- !u!4 &1333414227
 Transform:
   m_ObjectHideFlags: 0
