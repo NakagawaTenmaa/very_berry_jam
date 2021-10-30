@@ -40,7 +40,7 @@ public class EnemyManager : MonoBehaviour
         {
             switch (_enemy.CurrentState)
             {
-                case Enemy.State.Appear: Disappear(); break;
+                //case Enemy.State.Appear: Disappear(); break;
                 case Enemy.State.Disappear: Appear(); break;
                 default: break;
             }
