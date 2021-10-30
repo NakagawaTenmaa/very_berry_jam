@@ -40,16 +40,16 @@ public class MapChip : MonoBehaviour
         _parentNode = null;
     }
 
-    public void UpdateNode(Vector2Int startNodeId, Vector2Int targetNodeId)
+    public void UpdateNode(Vector2Int startNodeId, Vector2Int targetNodeId, bool isDiagonal)
     {
         int dx, dy;
         dx = Mathf.Abs(_nodeId.x - startNodeId.x);
         dy = Mathf.Abs(_nodeId.y - startNodeId.y);
-        _cost = Mathf.Max(dx, dy);
+        _cost = isDiagonal == true ? Mathf.Max(dx, dy) : dx + dy;
 
         dx = Mathf.Abs(targetNodeId.x - _nodeId.x);
         dy = Mathf.Abs(targetNodeId.y - _nodeId.y);
-        _hcost = Mathf.Max(dx, dy);
+        _hcost = isDiagonal == true ? Mathf.Max(dx, dy) : dx + dy;
     }
 
     public void ResetNode()

@@ -26,6 +26,7 @@ public class Map : MonoBehaviour
     };
 
     [SerializeField] MapChip _mapChipPrefab;
+    [SerializeField] bool _isDiagonal = false;
 
     List<MapChip> _nodeList;
     List<MapChip> _openList;
@@ -48,9 +49,8 @@ public class Map : MonoBehaviour
                 int chipId = kMapData[row, column];
 
                 MapChip chip = Instantiate(_mapChipPrefab, transform);
-                //chip.SetEnable(false);
                 chip.Init(row, column, chipId);
-                chip.SetEnable(false);
+                //chip.SetEnable(false);
                 chip.SetPosition(column - kMapWidth / 2, (row - kMapHeight / 2) * -1);              
                 switch (chipId)
                 {
@@ -142,7 +142,7 @@ public class Map : MonoBehaviour
             // ~DEBUG
             
             _nodeList[i].ResetNode();
-            _nodeList[i].UpdateNode(startNodeId, targetNodeId);
+            _nodeList[i].UpdateNode(startNodeId, targetNodeId, _isDiagonal);
         }
 
         // 開始ノード初期化
@@ -228,6 +228,17 @@ public class Map : MonoBehaviour
                 if (x == 0 && y == 0)
                 {
                     continue;
+                }
+
+                if (_isDiagonal == false)
+                {
+                    if (x == -1 && y == -1
+                    ||  x ==  1 && y ==  1
+                    ||  x ==  1 && y == -1
+                    ||  x == -1 && y ==  1)
+                    {
+                        continue;
+                    }
                 }
 
                 int cx = bestNodeId.x + x;
