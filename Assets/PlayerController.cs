@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    bool stop_flag = false;
+    BoxBase box_base = null;
+    int point = 0;
+
+    bool hide_status = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +19,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (box_base != null) {
+            if(box_base.gimmick()) {
+                point = box_base.addPoint();
+                box_base = null;
+            }
+            return;
+        }
+
         // 入力移動
         InputMove();
     }
@@ -34,5 +48,34 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(_right)) {
             transform.position += Vector3.right * Time.deltaTime * 1.5f;
         }
+    }
+
+    /// <summary>
+    /// 隠れるよ
+    /// </summary>
+    public void HideAction()
+    {
+        hide_status = Input.GetKey(KeyCode.Z);
+        if (!hide_status) return;
+
+        // 隠れるアニメーションはこちらに
+    }
+
+    /// <summary>
+    /// 隠れ状態の取得
+    /// </summary>
+    /// <returns></returns>
+    public bool getHideStatus()
+    {
+        return hide_status;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag != BoxConst.NORMAL_BOX) return;
+        if (!Input.GetKeyDown(KeyCode.Space)) return;
+
+        // ここで箱空ける(ポイント加算)
+        box_base = other.gameObject.GetComponent<BoxBase>();
     }
 }
