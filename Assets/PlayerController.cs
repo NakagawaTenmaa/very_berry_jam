@@ -23,16 +23,16 @@ public class PlayerController : MonoBehaviour
     void InputMove(KeyCode _up = KeyCode.W, KeyCode _down = KeyCode.S, KeyCode _right = KeyCode.D, KeyCode _left = KeyCode.A)
     {
         if (Input.GetKey(_up)) {
-            transform.position += Vector3.up;
+            transform.position += Vector3.up * Time.deltaTime * 1.5f;
         }
         if (Input.GetKey(_left)) {
-            transform.position += -Vector3.right;
+            transform.position += -Vector3.right * Time.deltaTime * 1.5f;
         }
         if (Input.GetKey(_down)) {
-            transform.position += -Vector3.up;
+            transform.position += -Vector3.up * Time.deltaTime * 1.5f;
         }
         if (Input.GetKey(_right)) {
-            transform.position += Vector3.right;
+            transform.position += Vector3.right * Time.deltaTime * 1.5f;
         }
     }
 }
