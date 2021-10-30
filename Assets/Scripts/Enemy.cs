@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -11,12 +9,23 @@ public class Enemy : MonoBehaviour
         Disappear,
     }
 
+    [SerializeField] EventCollider _searchCollider;
+
     State _currentState;
     public State CurrentState => _currentState;
 
     public void Init()
     {
         _currentState = State.Disappear;
+
+        _searchCollider.SetDelegate((gameObject) =>
+        {
+            if (!gameObject.CompareTag("Player")) return;
+            Debug.Log("Œ©‚Â‚©‚Á‚½I");
+
+            EventManager eventManager = EventManager.Instance;
+            eventManager.OnEvent(EventType.Failure);
+        });
     }
 
     public void Appear(Action onFinish = null)
