@@ -6,6 +6,8 @@ public class NormalBox : BoxBase
 {
     public int point = 100;
 
+    bool open_flag = false;
+
     public override bool gimmick()
     {
         return true;
@@ -13,6 +15,8 @@ public class NormalBox : BoxBase
 
     public override int addPoint()
     {
-        throw new System.NotImplementedException();
+        if (open_flag) return 0;
+        open_flag = true;
+        return point;
     }
 }

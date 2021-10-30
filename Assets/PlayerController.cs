@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
         return hide_status;
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.tag != BoxConst.NORMAL_BOX) return;
         if (!Input.GetKeyDown(KeyCode.Space)) return;
