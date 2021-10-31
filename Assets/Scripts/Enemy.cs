@@ -16,7 +16,8 @@ public class Enemy : MonoBehaviour
         Walk
     }
 
-    [SerializeField] EventCollider _searchCollider;
+    [SerializeField] EventCollider2D _searchCollider;
+    [SerializeField] EventCollider2D _mapNodeCollider;
 
     State _currentState;
     public State CurrentState => _currentState;
@@ -25,6 +26,8 @@ public class Enemy : MonoBehaviour
     ActiveState _currentActiveState;
     List<Vector2Int> _routeList;
     float _moveTime;
+
+    Action _onUpdate;
 
     public void Init()
     {
@@ -35,44 +38,56 @@ public class Enemy : MonoBehaviour
         _defaultPos = transform.position;
         _moveTime = 0;
 
-        _searchCollider.SetDelegate((gameObject) =>
+        _onUpdate = null;
+
+        // 発見イベント
+        _searchCollider.onTriggerEnter += (target) =>
         {
-            if (!gameObject.CompareTag("Player")) return;
+            if (!target.CompareTag("Player")) return;
             Debug.Log("見つかった！");
 
             EventManager eventManager = EventManager.Instance;
             eventManager.OnEvent(EventType.Failure);
-        });
+        };
+
+        // マップノード探索イベント
+        _mapNodeCollider.onTriggerStay += (target) =>
+        {
+            if (target.CompareTag("MapChip") == false
+            ||  _currentActiveState == ActiveState.Walk)
+            {
+                return;
+            }
+
+            _onUpdate = Walk;
+
+            _defaultPos = transform.position;
+            _moveTime = 0;
+
+            MapChip node = target.GetComponent<MapChip>();
+            if (MapManager.Instance.SearchRouteRandom(0, node.NodeId, _routeList) == true)
+            {
+                string result = string.Empty;
+                for (int i = 0; i < _routeList.Count; i++)
+                {
+                    Vector2Int route = _routeList[i];
+                    result += $"({route.x}, {route.y})";
+                    if (i != _routeList.Count - 1)
+                    {
+                        result += " -> ";
+                    }
+                }
+                Debug.Log(result);
+            }
+
+            _currentActiveState = ActiveState.Walk;
+            Debug.Log("探索開始");
+        };
     }
 
     void Update()
     {
-        if(_currentState != State.Appear)
-        {
-            return;
-        }
-
-        if (_currentActiveState == ActiveState.Walk)
-        {
-            if (_routeList.Count != 0)
-            {
-                _moveTime += Time.deltaTime;
-                Vector2Int targetId = _routeList[_routeList.Count - 1];
-                Vector2 targetPos = MapManager.Instance.GetNode(0, targetId).WorldPosition;
-                transform.position = Vector2.Lerp(_defaultPos, targetPos, _moveTime);
-                //float dist = Vector2.Distance(transform.position, targetPos);
-                if (_moveTime >= 1)
-                {
-                    _routeList.RemoveAt(_routeList.Count - 1);
-                    _defaultPos = transform.position;
-                    _moveTime = 0;
-                }
-            }
-            else
-            {
-                _currentActiveState = ActiveState.Idle;
-            }
-        }
+        _onUpdate?.Invoke();
     }
 
     public void Appear(Action onFinish = null)
@@ -94,34 +109,26 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(value);
     }
 
-    void OnTriggerStay2D(Collider2D other)
+    void Walk()
     {
-        if (other.CompareTag("MapChip") == false
-        || _currentActiveState == ActiveState.Walk)
+        if (_routeList.Count != 0)
         {
-            return;
-        }
-
-        _defaultPos = transform.position;
-        _moveTime = 0;
-
-        MapChip node = other.GetComponent<MapChip>();
-        if (MapManager.Instance.SearchRouteRandom(0, node.NodeId, _routeList) == true)
-        {
-            string result = string.Empty;
-            for (int i = 0; i < _routeList.Count; i++)
+            _moveTime += Time.deltaTime;
+            Vector2Int targetId = _routeList[_routeList.Count - 1];
+            Vector2 targetPos = MapManager.Instance.GetNode(0, targetId).WorldPosition;
+            transform.position = Vector2.Lerp(_defaultPos, targetPos, _moveTime);
+            //float dist = Vector2.Distance(transform.position, targetPos);
+            if (_moveTime >= 1)
             {
-                Vector2Int route = _routeList[i];
-                result += $"({route.x}, {route.y})";
-                if (i != _routeList.Count - 1)
-                {
-                    result += " -> ";
-                }
+                _routeList.RemoveAt(_routeList.Count - 1);
+                _defaultPos = transform.position;
+                _moveTime = 0;
             }
-            Debug.Log(result);
         }
-
-        _currentActiveState = ActiveState.Walk;
-        Debug.Log("探索開始");
+        else
+        {
+            _onUpdate = null;
+            _currentActiveState = ActiveState.Idle;
+        }
     }
 }
