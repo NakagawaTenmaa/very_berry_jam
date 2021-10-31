@@ -13,7 +13,7 @@ public class LoadCSVMap
 
     }
 
-    public void LoadCsv(int _number)
+    public List<string[]> LoadCsv(int _number)
     {
         TextAsset file_name = Resources.Load(pass + _number.ToString()) as TextAsset;
         StringReader render = new StringReader(file_name.text);
@@ -23,10 +23,6 @@ public class LoadCSVMap
             dates.Add(line.Split(','));
         }
 
-        foreach(var data in dates) { 
-            foreach(var s in data) {
-                Debug.Log(s);
-            }
-        }
+        return dates;
     }
 }
