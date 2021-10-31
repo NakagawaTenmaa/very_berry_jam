@@ -27,6 +27,7 @@ public class Map : MonoBehaviour
 
     [SerializeField] MapChip _mapChipPrefab;
     [SerializeField] bool _isDiagonal = false;
+    [SerializeField] bool _enable = false;
 
     List<MapChip> _nodeList;
     List<MapChip> _openList;
@@ -50,7 +51,7 @@ public class Map : MonoBehaviour
 
                 MapChip chip = Instantiate(_mapChipPrefab, transform);
                 chip.Init(row, column, chipId);
-                chip.SetEnable(false);
+                chip.SetEnable(_enable);
                 chip.SetPosition(column - kMapWidth / 2, (row - kMapHeight / 2) * -1);              
                 switch (chipId)
                 {
