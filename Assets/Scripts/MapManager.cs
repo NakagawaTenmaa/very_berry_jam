@@ -35,12 +35,12 @@ public class MapManager : SingletonMonoBehaviour<MapManager>
         int debugCount = 0;
         while (true)
         {
-            int x = Random.Range(0, Map.kMapWidth);
-            int y = Random.Range(0, Map.kMapHeight);
+            int x = Random.Range(0, _mapList[mapId].MapWidth);
+            int y = Random.Range(0, _mapList[mapId].MapHeight);
             nodeId = new Vector2Int(y, x);
 
-            if (Map.kMapData[y, x] == 0
-            && startNodeId != nodeId)
+            if (System.Convert.ToInt32(_mapList[mapId].MapData[y][x]) == 0
+            &&  startNodeId != nodeId)
             {
                 break;
             }

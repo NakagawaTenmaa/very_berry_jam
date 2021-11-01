@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LoadCSVMap
 {
-    private string pass = "Map";
+    private string pass = "map";
     private List<string[]> dates = new List<string[]>();
 
     public LoadCSVMap()
@@ -15,7 +15,7 @@ public class LoadCSVMap
 
     public List<string[]> LoadCsv(int _number)
     {
-        TextAsset file_name = Resources.Load(pass + _number.ToString()) as TextAsset;
+        TextAsset file_name = Resources.Load("Data/CsvData/" + pass + _number.ToString()) as TextAsset;
         StringReader render = new StringReader(file_name.text);
 
         while (render.Peek() != -1) {

@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,24 +10,25 @@ public class Map : MonoBehaviour
         Obstacle
     }
 
-    public const int kMapWidth = 16;
-    public const int kMapHeight = 8;
+    //public const int kMapWidth = 16;
+    //public const int kMapHeight = 8;
 
-    public static readonly int[,] kMapData = new int[kMapHeight, kMapWidth]
-    {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0 },
-        { 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-        { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-        { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0 },
-        { 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 }
-    };
+    //public static readonly int[,] kMapData = new int[kMapHeight, kMapWidth]
+    //{
+    //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    //    { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0 },
+    //    { 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+    //    { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
+    //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+    //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+    //    { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0 },
+    //    { 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 }
+    //};
 
     [SerializeField] MapChip _mapChipPrefab;
     [SerializeField] bool _isDiagonal = false;
     [SerializeField] bool _enable = false;
+    [SerializeField] bool _isEnableTarget = false;
 
     List<MapChip> _nodeList;
     List<MapChip> _openList;
@@ -35,28 +36,43 @@ public class Map : MonoBehaviour
 
     MapChip _targetNode;
 
+    List<string[]> _mapData;
+    int _mapWidth;
+    int _mapHeight;
+
+    public List<string[]> MapData => _mapData;
+    public int MapWidth => _mapWidth;
+    public int MapHeight => _mapHeight;
+
     void Start()
     {
         _nodeList = new List<MapChip>();
         _openList = new List<MapChip>();
         _closedList = new List<MapChip>();
 
+        // マップデータ読み込み
+        LoadCSVMap loader = new LoadCSVMap();
+        _mapData = loader.LoadCsv(1);
+        _mapHeight = _mapData.Count;
+        _mapWidth = _mapData[0].Length;
+
         // 行インデックス
-        for (int row = 0; row < kMapHeight; row++)
+        for (int row = 0; row < _mapHeight; row++)
         {
             // 列インデックス
-            for (int column = 0; column < kMapWidth; column++)
+            for (int column = 0; column < _mapWidth; column++)
             {
-                int chipId = kMapData[row, column];
+                int chipId = Convert.ToInt32(_mapData[row][column]);
 
                 MapChip chip = Instantiate(_mapChipPrefab, transform);
                 chip.Init(row, column, chipId);
                 chip.SetEnable(_enable);
-                chip.SetPosition(column - kMapWidth / 2, (row - kMapHeight / 2) * -1);              
+                chip.SetPosition(column - _mapWidth / 2, (row - _mapHeight / 2) * -1);              
                 switch (chipId)
                 {
                     case 0: chip.SetColor(Color.green); break;
                     case 1: chip.SetColor(Color.gray); break;
+                    case 2: chip.SetColor(Color.white); break;
                     default: Debug.LogError($"マップチップIDが正しくありません。id={chipId}");  break;
                 }
                 _nodeList.Add(chip);
@@ -138,6 +154,10 @@ public class Map : MonoBehaviour
             // DEBUG
             if(_targetNode != null)
             {
+                if (_isEnableTarget)
+                {
+                    _targetNode.SetOrderInLayer(0);
+                }
                 _targetNode.SetColor(Color.green);
             }
             // ~DEBUG
@@ -173,8 +193,12 @@ public class Map : MonoBehaviour
         // ルート取得
         MapChip targetNode = GetNode(targetNodeId);
         targetNode.SetColor(Color.blue);
+        if (_isEnableTarget)
+        {
+            targetNode.SetOrderInLayer(1);
+        }
         _targetNode = targetNode;
-        CreateRoute(targetNode, routeList, 30);
+        CreateRoute(targetNode, routeList, 3000);
 
         return true;
     }
@@ -247,8 +271,8 @@ public class Map : MonoBehaviour
 
                 if (cx < 0 
                 ||  cy < 0
-                ||  cx >= kMapHeight 
-                ||  cy >= kMapWidth)
+                ||  cx >= _mapHeight 
+                ||  cy >= _mapWidth)
                 {
                     continue;
                 }
