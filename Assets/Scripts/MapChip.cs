@@ -60,7 +60,7 @@ public class MapChip : MonoBehaviour
 
     public void SetPosition(float x, float y)
     {
-        transform.position = new Vector3((int)x, (int)y, 0);
+        transform.position = new Vector3(x, y, 0);
     }
 
     public void SetColor(float r, float g, float b, float a = 1)
@@ -86,5 +86,10 @@ public class MapChip : MonoBehaviour
     public void SetEnable(bool value)
     {
         _spriteRenderer.enabled = value;
+    }
+
+    public void SetOrderInLayer(int layer)
+    {
+        _spriteRenderer.sortingOrder = layer;
     }
 }
